@@ -1,0 +1,25 @@
+name: release-lint
+
+# Manual only: this demo app contains deliberate release mistakes, so the scan fails on purpose.
+on: workflow_dispatch
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npx expo prebuild --platform android --no-install
+      - name: Build the release bundle
+        working-directory: android
+        run: ./gradlew bundleRelease --no-daemon
+      - name: Lint the release build
+        run: npx app-release-lint@0 android/app/build/outputs/bundle/release/app-release.aab
