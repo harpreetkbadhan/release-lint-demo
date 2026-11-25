@@ -22,4 +22,6 @@ jobs:
         working-directory: android
         run: ./gradlew bundleRelease --no-daemon
       - name: Lint the release build
-        run: npx app-release-lint@0 android/app/build/outputs/bundle/release/app-release.aab
+        uses: harpreetkbadhan/release-lint@v0
+        with:
+          file: android/app/build/outputs/bundle/release/app-release.aab
